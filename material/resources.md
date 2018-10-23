@@ -1,0 +1,3 @@
+# Additional resources
+
+- [Transforming Code into Beautiful, Idiomatic Python](https://youtu.be/OSGv2VnC0go): a talk by Raymond Hettinger (Python core developer)
