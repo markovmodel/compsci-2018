@@ -3,7 +3,10 @@
 
 def mean(a):
     """Compute the arithmetic mean over an iterable a"""
-    return sum(a) / len(a)
+    try:
+        return sum(a) / len(a)
+    except ZeroDivisionError:
+        return 0
 
 
 def scalar_product(a, b):
@@ -35,6 +38,9 @@ def linear_regression(x, y):
     y_meanfree = [y_ - y_mean for y_ in y]
     xy = scalar_product(x_meanfree, y_meanfree)
     xx = scalar_product(x_meanfree, x_meanfree)
-    slope = xy / xx
+    try:
+        slope = xy / xx
+    except ZeroDivisionError:
+        slope = 0
     const = y_mean - slope * x_mean
     return slope, const
