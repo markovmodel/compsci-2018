@@ -66,6 +66,8 @@ def test_laplacian_2d():
                   [0., 0., 0., 0., 0., 1., 0., 1., -4.]]) * (3 / 1)**2)
 
 # Anothter test
+# From another implementation of our group, but may be not suitable 
+# for 2*2 degenerated case.
 def test_laplacian_2d2():
     nx, ny, lx, ly, pbc = 5, 4, 1, 1, True
     laplacian = create_laplacian_2d(nx, ny, lx, ly, pbc)
@@ -90,7 +92,7 @@ def test_laplacian_2d2():
                 laplacian[(x + nx*(y + 1)) % (nx*ny), x + y*nx] == my 
                 for y in range(ny) for x in range(nx))
     pbc = False
-    if pbc == False:
+    if not pbc:
         for y in range(ny):
             laplacian[nx*y, nx*y + nx - 1] = 0
             laplacian[nx*y + nx - 1, nx*y] = 0
