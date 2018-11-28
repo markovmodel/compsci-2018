@@ -5,11 +5,11 @@ def create_laplacian_2d(nx, ny, lx, ly, pbc=True):
     """ Computes discrete Laplacian for a 2d
         charge density matrix, ordered row-wise
         Args:
-            nx: number of grid points along x axis, nx >= 2
-            ny: number of grid points along y axis, ny >= 2
-            Lx: length of grid along x axis, Lx > 0
-            Ly: length of grid along y axis, Ly > 0
-            pbc: periodic boundry conditions, boolean
+            nx(int  >= 2): number of grid points along x axis
+            ny(int  >= 2): number of grid points along y axis
+            lx(float > 0): length of grid along x axis
+            ly(float > 0): length of grid along y axis
+            pbc(boolean): periodic boundry conditions
         output:
             Laplacian as nx * ny by nx * ny np.array
     """
@@ -28,20 +28,22 @@ def create_laplacian_2d(nx, ny, lx, ly, pbc=True):
 
     hx = (nx / lx) ** 2
     hy = (ny / ly) ** 2
-    a1 = (-2 * hx - 2 * hy) * np.diag(np.ones(nx * ny))
-    a2 = np.diag([0 if i % nx == 0 else hx for i in range(1, nx * ny)], 1)
-    a3 = np.diag([0 if i % nx == 0 else hx for i in range(1, nx * ny)], -1)
-    a4 = hy * np.diag(np.ones(nx * ny - nx), nx)
-    a5 = hy * np.diag(np.ones(nx * ny - nx), -nx)
+    a1 =  np.diag((-2 * hx - 2 * hy) * np.ones(nx * ny))
+    diag1 = hx * np.ones(nx * ny - 1)
+    diag1[nx-1::nx] = 0
+    a2 = np.diag(diag1 , 1)
+    a3 = np.diag(diag1 , -1)
+    a4 = np.diag(hy * np.ones(nx * ny - nx), nx)
+    a5 = np.diag(hy * np.ones(nx * ny - nx), -nx)
     laplacian = a1 + a2 + a3 + a4 + a5
 
     if pbc:
-        a6 = hy * np.diag(np.ones(nx), nx * ny - nx)
-        a7 = hy * np.diag(np.ones(nx), -nx * ny + nx)
-        a8 = np.diag([hx if i % nx == 0 else 0
-                     for i in range(0, nx * ny - nx + 1)], nx - 1)
-        a9 = np.diag([hx if i % nx == 0 else 0
-                     for i in range(0, nx * ny - nx + 1)], -nx + 1)
+        a6 = np.diag(hy * np.ones(nx), nx * ny - nx)
+        a7 = np.diag(hy * np.ones(nx), -nx * ny + nx)
+        diag2 = hx * np.zeros(nx * ny - nx + 1)
+        diag2[::nx] = hx
+        a8 = np.diag(diag2, nx - 1)
+        a9 = np.diag(diag2, -nx + 1)
         laplacian += a6 + a7 + a8 + a9
 
     return laplacian

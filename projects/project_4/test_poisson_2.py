@@ -58,18 +58,14 @@ def test_laplacian_2d_exceptions(nx, ny, lx, ly, pbc, exception):
         create_laplacian_2d(nx, ny, lx, ly, pbc=pbc)
 
 ### test periodc grid ###
-@pytest.mark.parametrize('nx, ny , lx, ly', [
-    (3, 3, 2, 2),
-    (3, 3, 1, 1),
-    (2, 2, 1, 1),
-    (2, 3, 1, 1),
-    (3, 2, 1, 1),
+@pytest.mark.parametrize('nx, ny', [
+    (100, 100),
     ])
-def test_laplacian_2d(nx, ny, lx, ly):
-    x = np.linspace(0, lx * 2 * np.pi, nx)
-    y = np.linspace(0, ly * 2 * np.pi, ny)
-    xx, yy = np.meshgrid(x,y)
-    grid = np.sin(xx) * np.cos(yy)
-    laplacian = create_laplacian_2d(nx, ny, lx * 2 * np.pi, ly * 2 * np.pi)
-    grid_lap = np.dot(laplacian, grid.reshape(nx * ny, 1))
-    np.testing.assert_almost_equal(grid, grid_lap.reshape(ny, nx))
+def test_laplacian_2d(nx, ny):
+    x = np.linspace(-np.pi, np.pi, nx, endpoint=False)
+    y = np.linspace(-np.pi, np.pi, ny, endpoint=False)
+    xx, yy = np.meshgrid(x,y, indexing='ij')
+    grid = np.sin(xx) + np.cos(yy)
+    laplacian = create_laplacian_2d(nx, ny, 2 * np.pi, 2 * np.pi)
+    grid_lap = np.dot(laplacian, grid.reshape(-1))
+    np.testing.assert_almost_equal(grid, -grid_lap.reshape(nx, ny),decimal=3)
