@@ -1,4 +1,5 @@
 import numpy as np
+
 """
 Creates a Laplacian in 2D
 
@@ -11,6 +12,7 @@ Arguments:
 
 
 def create_laplacian_2d(nx, ny, lx, ly, pbc=True):
+    
     if(nx < 2 or ny < 2):
         raise ValueError('We need at least two grid points')
     if(lx <= 0 or ly <= 0):
@@ -21,28 +23,24 @@ def create_laplacian_2d(nx, ny, lx, ly, pbc=True):
     mx = (nx / lx)**2
     my = (ny / ly)**2
     laplacian = np.zeros([max_matrix_entry, max_matrix_entry])
-    if pbc:
-        for x in range(nx):
-            for y in range(ny):
-                i = x * ny + y
-                laplacian[i, i] -= 2 * (mx + my)
-                laplacian[i, (i+ny) % max_matrix_entry] += 1 * mx
-                laplacian[i, (i-ny) % max_matrix_entry] += 1 * mx
-                laplacian[i, (i+1) % max_matrix_entry] += 1 * my
-                laplacian[i, (i-1) % max_matrix_entry] += 1 * my
-    if not pbc:
-        for x in range(nx):
-            for y in range(ny):
-                i = x * ny + y
-                laplacian[i, i] -= 2 * (mx + my)
-                if i+ny < max_matrix_entry:
-                    laplacian[i, i+ny] += 1 * mx
+    for x in range(nx):
+        for y in range(ny):
+            i = x * ny + y
+            laplacian[i, i] -= 2 (mx + my)
+            if pbc
+                laplacian[i, (i + ny) % max_matrix_entry] += 1 * my
+                laplacian[i, (i - ny) % max_matrix_entry] += 1 * my
+                laplacian[i, (i + 1) % nx + ( i // nx) * nx] += 1 * mx
+                laplacian[i, (i - 1) % nx + ( i // nx) * nx] += 1 * mx
+            else:
+                if i + ny < max_matrix_entry:
+                    laplacian[i, i + ny] += 1 * my
                 if i-ny >= 0:
-                    laplacian[i, i-ny] += 1 * mx
-                if i+1 < max_matrix_entry:
-                    laplacian[i, i+1] += 1 * my
-                if i-1 >= max_matrix_entry:
-                    laplacian[i, i-1] += 1 * my
+                    laplacian[i, i - ny] += 1 * my
+                if (i + 1) % nx != 0:
+                    laplacian[i, i + 1] += 1 * mx
+                if (i) % nx != 0:
+                    laplacian[i, i - 1] += 1 * mx
 
     return laplacian
 
